@@ -2,20 +2,18 @@
 <manifest package="com.seazon.feedme.spider.toutiao"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:supportsRtl="true">
+        <service android:name="com.seazon.feedme.spider.toutiao.SpiderService">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="com.seazon.feedme.spider.Extension"/>
             </intent-filter>
-        </activity>
+        </service>
     </application>
 
 </manifest>
