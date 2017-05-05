@@ -15,6 +15,10 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven {
+            // CommonAdapter库需要
+            url "https://jitpack.io"
+        }
     }
 }
 

@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -26,25 +27,27 @@ import com.seazon.feedme.spider.ISpider;
 import com.seazon.feedme.spider.SpiderItem;
 import com.seazon.feedme.spider.SpiderStream;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import kale.adapter.CommonRcvAdapter;
+import kale.adapter.item.AdapterItem;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String UNSPECIFIED = "Unspecified";
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     Spinner spiderSpinner;
     EditText urlEdit;
-    TextView outputView;
     Button loadNextBtn;
+    private RecyclerView recyclerView;
 
     String[] keys;
     ISpider iSpider;
     String text;
     String continuation;
+    List<SpiderItem> list = new ArrayList<>();
+    CommonRcvAdapter rcvAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +66,15 @@ public class MainActivity extends AppCompatActivity {
 //        urlEdit.setText("2151445694"); // baijia 数据猿
 //        urlEdit.setText("898208290"); // baijia 顾泽辉
         urlEdit.setText("14362"); // yidian 毒舌电影
-        outputView = (TextView) findViewById(R.id.outputView);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        rcvAdapter = new CommonRcvAdapter<SpiderItem>(list) {
+            @Override
+            public AdapterItem<SpiderItem> createItem(Object o) {
+                return new Item(MainActivity.this);
+            }
+        };
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(rcvAdapter);
         loadNextBtn = (Button) findViewById(R.id.loadNextBtn);
         loadNextBtn.setEnabled(false);
     }
@@ -141,26 +152,15 @@ public class MainActivity extends AppCompatActivity {
         text = rep + "\n\n";
         rep = iSpider.getItems(url, continuation1);
         SpiderStream stream = parse(rep);
+        list = stream.items;
         this.continuation = stream.continuation;
-        if (stream != null && stream.items != null) {
-            for (SpiderItem item : stream.items) {
-                text += "      title:" + item.title + "\n";
-                text += "        url:" + item.url + "\n";
-                text += "publishTime:" + sdf.format(new Date(item.publishTime)) + "\n";
-                text += "  thumbnail:" + item.thumbnail + "\n";
-                text += "     author:" + item.author + "\n";
-                text += "    content:" + item.content + "\n";
-                text += "\n";
-            }
-        } else {
-            text += "null";
-        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 boolean enable = (continuation != null);
                 loadNextBtn.setEnabled(enable);
-                outputView.setText(text);
+                rcvAdapter.setData(list);
+                rcvAdapter.notifyDataSetChanged();
             }
         });
     }
