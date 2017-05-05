@@ -25,12 +25,15 @@ import com.seazon.feedme.spider.ISpider;
 import com.seazon.feedme.spider.SpiderItem;
 import com.seazon.feedme.spider.SpiderStream;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String UNSPECIFIED = "Unspecified";
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     Spinner spiderSpinner;
     EditText urlEdit;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     String[] keys;
     ISpider iSpider;
     String text;
+    String continuation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,14 +92,14 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void onLoad(View v) {
+    public void onLoadFirst(View v) {
         if (iSpider != null) {
             final String url = urlEdit.getText().toString();
             new Thread() {
                 @Override
                 public void run() {
                     try {
-                        loadRss(url);
+                        loadRss(url, null);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -104,16 +108,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void loadRss(String url) throws RemoteException {
+    public void onLoadNext(View v) {
+        if (iSpider != null) {
+            final String url = urlEdit.getText().toString();
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        loadRss(url, continuation);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+    }
+
+    private void loadRss(String url, String continuation) throws RemoteException {
         String rep = iSpider.getFeed(url);
         text = rep + "\n\n";
-        rep = iSpider.getItems(url, String.valueOf(System.currentTimeMillis()));
+        rep = iSpider.getItems(url, continuation);
         SpiderStream stream = parse(rep);
+        this.continuation = stream.continuation;
         if (stream != null && stream.items != null) {
             for (SpiderItem item : stream.items) {
                 text += "      title:" + item.title + "\n";
                 text += "        url:" + item.url + "\n";
-                text += "publishTime:" + item.publishTime + "\n";
+                text += "publishTime:" + sdf.format(new Date(item.publishTime)) + "\n";
                 text += "  thumbnail:" + item.thumbnail + "\n";
                 text += "     author:" + item.author + "\n";
                 text += "    content:" + item.content + "\n";

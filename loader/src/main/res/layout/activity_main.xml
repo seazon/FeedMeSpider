@@ -21,13 +21,20 @@
             android:id="@+id/urlEdit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="924503095"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onLoad"
-            android:text="load"/>
+            android:onClick="onLoadFirst"
+            android:text="load frist"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onLoadNext"
+            android:text="load next"/>
 
     </LinearLayout>
 

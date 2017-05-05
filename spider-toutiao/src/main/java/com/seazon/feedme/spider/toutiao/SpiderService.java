@@ -18,21 +18,12 @@ import org.htmlcleaner.TagNode;
 
 public class SpiderService extends BaseSpiderService {
 
-    private static final String PREFIX = "http://toutiao.com/m";
     private static final String REQUEST_ITEM_URL = "http://www.toutiao.com/c/user/article/?user_id=%1$s&max_behot_time=%2$s&count=20";
     private static final String REQUEST_FEED_URL = "http://www.toutiao.com/c/user/%s/";
 
-    private String url = "5954781019";
-    //    private String url = "4198268867";
-//    private String url = "50037963924";
-//    private String url = "54564710422";
-
     @Override
-    public SpiderFeed getFeed(String url2) {
+    public SpiderFeed getFeed(String url) {
         LogUtils.debug("getFeed, url:" + url);
-//            if (!url.startsWith(PREFIX)) {
-//                return null;
-//            }
         try {
             String r = HttpUtils.getHttpManager().execute(HttpMethod.GET, String.format(REQUEST_FEED_URL, url));
             return clawFeed(r, url);
@@ -43,8 +34,11 @@ public class SpiderService extends BaseSpiderService {
     }
 
     @Override
-    public SpiderStream getItems(String url2, String continuation) {
-        LogUtils.debug("getItems, url:" + url);
+    public SpiderStream getItems(String url, String continuation) {
+        LogUtils.debug("getItems, url:" + url + ", continuation:" + continuation);
+        if (continuation == null) {
+            continuation = String.valueOf(System.currentTimeMillis());
+        }
         try {
             String r = HttpUtils.getHttpManager().execute(HttpMethod.GET, String.format(REQUEST_ITEM_URL, url, continuation));
             return claw(r);
@@ -72,7 +66,7 @@ public class SpiderService extends BaseSpiderService {
         } catch (Exception e) {
             LogUtils.error(e);
             mediaInfo = new MediaInfo();
-            mediaInfo.name = url.substring(PREFIX.length());
+            mediaInfo.name = url;
         }
         SpiderFeed feed = new SpiderFeed();
         feed.title = mediaInfo.name;
