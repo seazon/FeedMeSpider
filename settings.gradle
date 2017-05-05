@@ -1,1 +1,1 @@
-include ':loader', ':lib', ':spider-toutiao', ':utils', ':spider-baijia'
+include ':loader', ':lib', ':spider-toutiao', ':utils', ':spider-baijia', ':spider-yidian'

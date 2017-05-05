@@ -61,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
 //        urlEdit.setText("54564710422"); // toutiao 老司机数码
 //        urlEdit.setText("924503095"); // baijia 孙永杰
 //        urlEdit.setText("2151445694"); // baijia 数据猿
-        urlEdit.setText("898208290"); // baijia 顾泽辉
+//        urlEdit.setText("898208290"); // baijia 顾泽辉
+        urlEdit.setText("14362"); // yidian 毒舌电影
         outputView = (TextView) findViewById(R.id.outputView);
         loadNextBtn = (Button) findViewById(R.id.loadNextBtn);
         loadNextBtn.setEnabled(false);
