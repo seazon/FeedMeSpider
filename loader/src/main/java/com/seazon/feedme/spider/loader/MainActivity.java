@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     Spinner spiderSpinner;
     EditText urlEdit;
     TextView outputView;
+    Button loadNextBtn;
 
     String[] keys;
     ISpider iSpider;
@@ -53,7 +55,16 @@ public class MainActivity extends AppCompatActivity {
         initSpider();
 
         urlEdit = (EditText) findViewById(R.id.urlEdit);
+//        urlEdit.setText("5954781019"); // toutiao 环球网
+//        urlEdit.setText("4198268867"); // toutiao 爱范儿
+//        urlEdit.setText("50037963924"); // toutiao 鹿幽鸣
+//        urlEdit.setText("54564710422"); // toutiao 老司机数码
+//        urlEdit.setText("924503095"); // baijia 孙永杰
+//        urlEdit.setText("2151445694"); // baijia 数据猿
+        urlEdit.setText("898208290"); // baijia 顾泽辉
         outputView = (TextView) findViewById(R.id.outputView);
+        loadNextBtn = (Button) findViewById(R.id.loadNextBtn);
+        loadNextBtn.setEnabled(false);
     }
 
     private void initSpider() {
@@ -124,10 +135,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void loadRss(String url, String continuation) throws RemoteException {
+    private void loadRss(String url, String continuation1) throws RemoteException {
         String rep = iSpider.getFeed(url);
         text = rep + "\n\n";
-        rep = iSpider.getItems(url, continuation);
+        rep = iSpider.getItems(url, continuation1);
         SpiderStream stream = parse(rep);
         this.continuation = stream.continuation;
         if (stream != null && stream.items != null) {
@@ -146,6 +157,8 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                boolean enable = (continuation != null);
+                loadNextBtn.setEnabled(enable);
                 outputView.setText(text);
             }
         });

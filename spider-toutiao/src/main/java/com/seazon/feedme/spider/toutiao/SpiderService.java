@@ -18,7 +18,8 @@ import org.htmlcleaner.TagNode;
 
 public class SpiderService extends BaseSpiderService {
 
-    private static final String REQUEST_ITEM_URL = "http://www.toutiao.com/c/user/article/?user_id=%1$s&max_behot_time=%2$s&count=20";
+    private static final int COUNT = 20;
+    private static final String REQUEST_ITEM_URL = "http://www.toutiao.com/c/user/article/?user_id=%1$s&max_behot_time=%2$s&count=" + COUNT;
     private static final String REQUEST_FEED_URL = "http://www.toutiao.com/c/user/%s/";
 
     @Override
@@ -81,7 +82,11 @@ public class SpiderService extends BaseSpiderService {
         }
 
         SpiderStream localRssStream = new SpiderStream();
-        localRssStream.continuation = String.valueOf(toutiaoStream.next.continuation);
+        if (toutiaoStream.next.continuation <= 0 || toutiaoStream.data.size() < COUNT) {
+            localRssStream.continuation = null;
+        } else {
+            localRssStream.continuation = String.valueOf(toutiaoStream.next.continuation);
+        }
         localRssStream.items = SpiderItem.parseList(new Gson().toJson(toutiaoStream.data));
         return localRssStream;
     }

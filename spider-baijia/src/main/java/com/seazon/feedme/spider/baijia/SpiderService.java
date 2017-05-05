@@ -16,7 +16,8 @@ import java.util.Date;
 
 public class SpiderService extends BaseSpiderService {
 
-    private static final String REQUEST_ITEM_URL = "http://baijia.baidu.com/ajax/authorlatestarticle?page=%2$s&pagesize=20&authorid=%1$s&prevarticalid=1";
+    private static final int COUNT = 20;
+    private static final String REQUEST_ITEM_URL = "http://baijia.baidu.com/ajax/authorlatestarticle?page=%2$s&authorid=%1$s&prevarticalid=1&pagesize=" + COUNT;
     private static final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private static final SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy");
@@ -72,7 +73,12 @@ public class SpiderService extends BaseSpiderService {
         }
 
         SpiderStream localRssStream = new SpiderStream();
-        localRssStream.continuation = String.valueOf(page + 1);
+        if (stream.data.list.size() < COUNT) {
+            localRssStream.continuation = null;
+        } else {
+            localRssStream.continuation = String.valueOf(page + 1);
+        }
+
         localRssStream.items = SpiderItem.parseList(new Gson().toJson(stream.data.list));
         return localRssStream;
     }
