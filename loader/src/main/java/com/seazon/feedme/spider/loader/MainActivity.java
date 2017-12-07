@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
 //        urlEdit.setText("924503095"); // baijia 孙永杰
 //        urlEdit.setText("2151445694"); // baijia 数据猿
 //        urlEdit.setText("898208290"); // baijia 顾泽辉
-        urlEdit.setText("14362"); // yidian 毒舌电影
+//        urlEdit.setText("14362"); // yidian 毒舌电影
+        urlEdit.setText("54547876128,1557065300203521"); //toutiao 职场学
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         rcvAdapter = new CommonRcvAdapter<SpiderItem>(list) {
             @Override
